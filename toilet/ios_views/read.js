@@ -8,7 +8,7 @@ import {
   Image,
   NavigatorIOS,
   RefreshControl,
-  ActivityIndicatorIOS
+  ActivityIndicator
   } from 'react-native';
 
 import Util from './util';
@@ -54,7 +54,7 @@ class ReadView extends Component{
               <Space/>
             </ScrollView>)
             :
-            (<ActivityIndicatorIOS
+            (<ActivityIndicator
               animating={true}
               style={[{height: 80}]}
               size="large"
