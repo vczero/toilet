@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="zh-CN" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <meta name="screen-orientation" content="portrait">
+  <meta name="x5-orientation" content="portrait">
+  <meta name="full-screen" content="yes">
+  <meta name="x5-fullscreen" content="true">
+  <meta name="browsermode" content="application">
+  <meta name="x5-page-mode" content="app">
+  <meta name="msapplication-tap-highlight" content="no">
+  <title>天气</title>
+  <style type="text/css" rel="stylesheet">
+    html,body{margin:0;padding:0;width:100%;height:100%;}
+    img,canvas{-webkit-touch-callout:none;}
+    #container{width:100%;height:100%;}
+    .amap-logo img{margin-left:55px;margin-bottom:10px;}
+    .amap-scalecontrol{margin-left:58px;margin-bottom:15px;}
+    .amap-copyright{display: none;}
+    .locationIcon{background-color:#fff;width:36px;height:36px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      box-shadow: 2px 2px 5px #888888;
+    }
+    .locationIcon>img{width:32px;margin-left:2px;margin-top:2px;}
+    .loc_circle{width:50px;height:50px;border:2px solid #49B3F4;
+      border-radius:50px;background-color:#64C7FA;opacity:0.5;}
+    .loc_img{position: relative;left:20px;top:-34px;}
+    .weather_panel{
+      position: absolute;
+      width:280px;
+      height:180px;
+      top:50%;
+      margin-top:-90px;
+      left:50%;
+      margin-left:-140px;
+      background-color:#fff;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      opacity: 0.9;
+      z-index: 1000;
+      padding-left:5px;
+      font-size:14px;
+      box-shadow: 2px 2px 5px #888888;
+    }
+    .weather_panel>div{
+      margin-bottom:3px;
+    }
+    .weather_title{
+      width:270px;
+      text-align: center;
+      margin-top:5px;
+      font-weight: bold;
+      font-size:15px;
+    }
+  </style>
+  <script src="http://webapi.amap.com/maps?v=1.3&key=b9c503c21f0b0dfdee1adaf5fb6bb363"></script>
+</head>
+<body>
+  <div id="container"></div>
+  <div id="panel"></div>
+  <div class="weather_panel">
+    <div class="weather_title">天气信息</div>
+    <div>省/市: <span id="weather_pro"></span></div>
+    <div>区/县: <span id="weather_city"></span></div>
+    <div>天气: <span id="weather_weather"></span></div>
+    <div>风向: <span id="weather_wind"></span></div>
+    <div>温度: <span id="weather_temp"></span>℃</div>
+    <div>报告时间: <span id="weather_time"></span></div>
+  </div>
+  <script type="text/javascript">
+    var isiPhone = navigator.userAgent.toLocaleLowerCase().match(/iPhone/i);
+    var map = new AMap.Map('container', {
+      resizeEnable: true
+    });
+    var walking = null;
+
+    var locationIcon = '<div class="locationIcon">'
+      + '<img src="./geolocation.png"/>'
+      + '</div>';
+
+    var locationComplete = function(data){
+      map.clearMap();
+      map.setZoom(16);
+      showWeather([data.position.lng, data.position.lat]);
+    };
+    var locationError = function(){
+      alert('定位失败，请在手机上开启定位:设置->隐私->定位服务->找厕所->使用应用期间');
+    };
+
+    map.plugin('AMap.Geolocation', function () {
+      var geolocation = new AMap.Geolocation({
+        enableHighAccuracy: true,
+        timeout: 60000,
+        maximumAge: 0,
+        convert: true,
+        showButton: true,
+        buttonPosition: 'LB',
+        buttonOffset: new AMap.Pixel(10, 10),
+        showMarker: true,
+        showCircle: true,
+        panToLocation: true,
+        zoomToAccuracy:true,
+        buttonDom: locationIcon
+      });
+      map.addControl(geolocation);
+      geolocation.getCurrentPosition();
+      AMap.event.addListener(geolocation, 'complete', locationComplete);
+      AMap.event.addListener(geolocation, 'error', locationError);
+    });
+
+    map.plugin(["AMap.ToolBar"],function(){
+      map.addControl(new AMap.ToolBar());
+    });
+    map.plugin(["AMap.Scale"],function(){
+      map.addControl(new AMap.Scale());
+    });
+
+    function showWeather(center){
+      var marker = new AMap.Marker({
+        position: center,
+        map: map,
+        content:'<div class="loc_circle"></div><img class="loc_img" src="loc.png" style="width:16px;"/>'
+      });
+
+      AMap.service('AMap.Geocoder', function() {
+        var geo = new AMap.Geocoder();
+        geo.getAddress(center, function(status, result){
+          if (status === 'complete' && result.info === 'OK') {
+            //获取天气信息
+            var district = result.regeocode.addressComponent.district;
+            AMap.service('AMap.Weather', function() {
+              var weather = new AMap.Weather();
+              weather.getLive(district, function(err, result){
+                if (err) {return;}
+                document.querySelector('#weather_pro').innerHTML = result.province;
+                document.querySelector('#weather_city').innerHTML = result.city;
+                document.querySelector('#weather_weather').innerHTML = result.weather;
+                document.querySelector('#weather_wind').innerHTML = result.windDirection;
+                document.querySelector('#weather_temp').innerHTML = result.temperature;
+                document.querySelector('#weather_time').innerHTML = result.reportTime;
+              });
+            });
+          }
+        });
+      });
+    }
+
+    document.querySelector('a.amap-logo').onclick = function(){
+      return false;
+    };
+
+  </script>
+</body>
+</html>
