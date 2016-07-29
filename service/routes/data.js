@@ -104,7 +104,7 @@ router.post('/login', function(req, res, next) {
   var username = req.body.username;
   var password = req.body.password;
 
-  if(username === 'admin_admin' && password === '#Dddsdas@#@#@!e332'){
+  if(username === 'admin' && password === '123456'){
     req.session.user = {
       username: username,
       ok: '@#$%&^@@'
