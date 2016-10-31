@@ -46,7 +46,7 @@ class toilet extends Component {
               selectedTab: 'toilet'
             });
           }}>
-          {this._renderView('toilet')}
+          {this._renderView()}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="阅读"
@@ -58,7 +58,7 @@ class toilet extends Component {
               selectedTab: 'read'
             });
           }}>
-          {this._renderView('read')}
+          {this._renderView()}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="天气"
@@ -70,7 +70,7 @@ class toilet extends Component {
               selectedTab: 'weather'
             });
           }}>
-          {this._renderView('weather')}
+          {this._renderView()}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="设置"
@@ -82,15 +82,15 @@ class toilet extends Component {
               selectedTab: 'setting'
             });
           }}>
-          {this._renderView('setting')}
+          {this._renderView()}
         </TabBarIOS.Item>
       </TabBarIOS>
     );
   }
 
-  _renderView(name){
+  _renderView(){
     var view = null;
-    switch (name){
+    switch (this.state.selectedTab){
       case 'toilet':
         view = <ToiletPage ></ToiletPage>;
         break;
