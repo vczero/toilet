@@ -185,7 +185,7 @@
                 walking.clear();
                 var start = new AMap.LngLat(center[0], center[1]);
                 var end = poi.location;
-                walking.search(start, end, function(status, result){}, function(status, result){});
+                walking.search(start, end);
               }
 
               if(isiPhone && isiPhone.length){
