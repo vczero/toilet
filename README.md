@@ -29,7 +29,7 @@
 #### 当地的实时天气      
 ![](weather.png)                 
 #### App Store (iOS 8.0+)  搜索“厕所在哪” 即可下载            
-![](ios.png)
+![](http://or2bvb8co.bkt.clouddn.com/cesuo.png)
 
 >## 架构  
 
